@@ -30,6 +30,7 @@ It wrote the code, ran away, and now the game is unplayable.
   - FIXME 1: `secret` was being stringified on even attempts, which broke the win comparison against the numeric `guess`.
   - FIXME 2: the "Too High"/"Too Low" feedback messages were swapped, telling the player to go the wrong direction.
   - FIXME 3: clicking "New Game" reset `attempts` and `secret` but left `status` and `history` untouched, so the app immediately hit `st.stop()` on the stale "won"/"lost" status and looked stuck in the previous game.
+  - FIXME 4: the guess input showed "Press Enter to apply" but pressing Enter did nothing, since a plain `st.text_input` outside a form only reruns the script on Enter - it doesn't set the Submit button's return value to `True`. Wrapped the input and Submit button in an `st.form` so Enter now submits the guess like clicking the button.
 - [ ] Explain what fixes you applied.
 
 ## 📸 Demo Walkthrough

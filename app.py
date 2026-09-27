@@ -120,17 +120,21 @@ with st.expander("Developer Debug Info"):
     st.write("Difficulty:", difficulty)
     st.write("History:", st.session_state.history)
 
-raw_guess = st.text_input(
-    "Enter your guess:",
-    key=f"guess_input_{difficulty}"
-)
+# FIXME 4: the guess input showed "Press Enter to apply" but Enter did nothing,
+# because a plain text_input's Enter keypress just reruns the script - it doesn't
+# set the Submit button's return value to True. Wrapping it in a form makes Enter
+# trigger the form's submit button like a real click.
+with st.form(key=f"guess_form_{difficulty}"):
+    raw_guess = st.text_input(
+        "Enter your guess:",
+        key=f"guess_input_{difficulty}"
+    )
+    submit = st.form_submit_button("Submit Guess 🚀")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
-    submit = st.button("Submit Guess 🚀")
-with col2:
     new_game = st.button("New Game 🔁")
-with col3:
+with col2:
     show_hint = st.checkbox("Show hint", value=True)
 
 # FIXME 3: New Game only reset attempts/secret, leaving status/history stale so
