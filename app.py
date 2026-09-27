@@ -7,6 +7,8 @@ from logic_utils import (
     parse_guess,
     update_score,
 )
+# FIX: Refactored all pure game logic out of app.py into logic_utils.py (AI agent
+# mode) so it can be unit tested without Streamlit; see tests/test_game_logic.py.
 
 HINT_MESSAGES = {
     "Win": "🎉 Correct!",
@@ -72,6 +74,8 @@ with st.expander("Developer Debug Info"):
 # because a plain text_input's Enter keypress just reruns the script - it doesn't
 # set the Submit button's return value to True. Wrapping it in a form makes Enter
 # trigger the form's submit button like a real click.
+# FIX: asked the AI how to make Enter submit a Streamlit text_input; it suggested
+# st.form, which I verified in the browser fixes the behavior described above.
 with st.form(key=f"guess_form_{difficulty}"):
     raw_guess = st.text_input(
         "Enter your guess:",
@@ -85,8 +89,9 @@ with col1:
 with col2:
     show_hint = st.checkbox("Show hint", value=True)
 
-# FIXME 3: New Game only reset attempts/secret, leaving status/history stale so
-# the app immediately hit st.stop() on the previous "won"/"lost" status.
+# FIX: New Game only reset attempts/secret; AI (agent mode) pointed out that status
+# and history were never cleared, which made the stale "won"/"lost" status trigger
+# st.stop() below and made the app look stuck in the previous game.
 if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(low, high)
@@ -116,6 +121,8 @@ if submit:
 
         # FIXME 1 (fixed): secret used to be stringified on even attempts, which broke
         # check_guess's numeric comparison (e.g. "10" > "9" is False lexicographically).
+        # FIX: found via manual repro (every other guess behaved wrong); AI explained
+        # the root cause (str vs int comparison) and I removed the stringify branch.
         secret = st.session_state.secret
 
         outcome = check_guess(guess_int, secret)

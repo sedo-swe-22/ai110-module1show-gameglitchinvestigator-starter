@@ -38,6 +38,11 @@ def check_guess(guess, secret):
 
     outcome examples: "Win", "Too High", "Too Low"
     """
+    # FIXME 2 (fixed): "Too High"/"Too Low" messages were swapped in the original
+    # app.py, telling the player to go the wrong direction.
+    # FIX: AI helped trace the swapped branches during refactor; corrected the
+    # direction and simplified the return value to just the outcome string (no
+    # message tuple) to match the test contract in tests/test_game_logic.py.
     if guess == secret:
         return "Win"
 

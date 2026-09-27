@@ -22,18 +22,23 @@ Document at least 3 bugs you found. Add rows as needed.
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion you did not accept as written (including what the AI suggested, why you rejected or changed it, and how you verified your version). It does not have to be a suggestion that was wrong: over-engineered, out of scope, harder to read, or a poor fit for this codebase all count.
+I used Claude Code in agent mode as my pair-programming partner for the whole repair: it read `app.py`, proposed fixes for each FIXME, edited the files directly, and ran `pytest`/`py_compile` after every change to confirm nothing broke.
+
+**A suggestion that was correct:** For FIXME 4 (the guess box said "Press Enter to apply" but Enter did nothing), the AI explained that a plain `st.text_input` outside a form only reruns the script on Enter - it never sets a separate `st.button`'s return value to `True`. It suggested wrapping the input and the Submit button in an `st.form`, since Streamlit forms are specifically built so that pressing Enter anywhere inside them triggers the `form_submit_button`. I verified this with Streamlit's `AppTest` framework (simulating the form submit and checking `session_state`): the guess was correctly evaluated, the score updated, and `status` flipped to `"won"` on a correct guess - confirming the fix actually wires Enter up to the same code path as clicking the button.
+
+**A suggestion I didn't accept as written:** To verify the FIXME 4 fix, the AI first suggested using a live Chrome browser session (via a browser-automation skill) to literally type a guess and press Enter. I declined to install the browser extension that required, since it was heavier setup than the check needed. The AI adjusted and instead verified the fix using Streamlit's built-in `AppTest` testing utility, which drives the actual script without any browser dependency. This wasn't a "wrong" suggestion, just a poor fit given I didn't want to install new tooling for a one-off check - and the `AppTest` route turned out to be just as convincing since it exercises the real form-submission code path.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+I considered a bug fixed only after two things lined up: the specific symptom I'd reproduced was gone, and `pytest tests/` still passed (or, for a new fix, started passing) with no regressions elsewhere. For state-related bugs (FIXME 3 and FIXME 4) I also used Streamlit's `AppTest` to run the app headlessly and inspect `st.session_state` directly before and after clicking a button, since those bugs weren't visible in unit tests alone.
+
+One concrete test: after fixing FIXME 3 (New Game not resetting the game), I ran an `AppTest` script that clicked "Submit Guess" with the correct answer, confirmed `status == "won"`, then clicked "New Game" and asserted `status == "playing"`, `attempts == 0`, and `history == []`. Before the fix, `status` stayed `"won"` after New Game, which meant the app hit `st.stop()` on the very next rerun and looked frozen - the test made that failure obvious instead of me having to guess from the UI.
+
+For `logic_utils.py`, I ran `pytest tests/ -v` after every change. Once `check_guess`, `get_range_for_difficulty`, `parse_guess`, and `update_score` were all refactored in, the suite went from 3 tests (only covering `check_guess`) to 18 passing tests in `0.04s`.
+
+AI did help design the tests: I asked it to first review `logic_utils.py` and report which behaviors had no test coverage before writing anything. It identified several non-obvious rules I hadn't thought to test myself - the score floor of `10` on a late win, the deliberately different even/odd scoring for "Too High", `parse_guess` truncating (not rounding) decimal strings like `"50.9"` to `50`, and the silent fallback to `(1, 100)` for an unrecognized difficulty. I reviewed that list, asked for tests covering all of them, and confirmed all 18 passed together.
 
 ---
 
