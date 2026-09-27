@@ -27,6 +27,7 @@ It wrote the code, ran away, and now the game is unplayable.
 
 - [ ] Describe the game's purpose.
 - [ ] Detail which bugs you found.
+  - FIXME 1: `secret` was being stringified on even attempts, which broke the win comparison against the numeric `guess`.
 - [ ] Explain what fixes you applied.
 
 ## 📸 Demo Walkthrough
