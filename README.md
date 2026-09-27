@@ -29,6 +29,7 @@ It wrote the code, ran away, and now the game is unplayable.
 - [ ] Detail which bugs you found.
   - FIXME 1: `secret` was being stringified on even attempts, which broke the win comparison against the numeric `guess`.
   - FIXME 2: the "Too High"/"Too Low" feedback messages were swapped, telling the player to go the wrong direction.
+  - FIXME 3: clicking "New Game" reset `attempts` and `secret` but left `status` and `history` untouched, so the app immediately hit `st.stop()` on the stale "won"/"lost" status and looked stuck in the previous game.
 - [ ] Explain what fixes you applied.
 
 ## 📸 Demo Walkthrough
