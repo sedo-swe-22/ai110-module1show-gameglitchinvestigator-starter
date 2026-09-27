@@ -37,20 +37,26 @@ It wrote the code, ran away, and now the game is unplayable.
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Run `python -m streamlit run app.py` and open the app in the browser. Pick a difficulty from the sidebar (Easy/Normal/Hard) and note the range and attempts allowed.
+2. Open the "Developer Debug Info" expander to see the secret number, current attempts, score, and guess history.
+3. Type a guess that's too high and press **Enter** (no need to click the button) - the app submits immediately and shows the correct "📉 Go LOWER!" hint.
+4. Type a guess that's too low and submit - the app now correctly shows "📈 Go HIGHER!" instead of the old swapped message.
+5. Enter the exact secret number - the app shows balloons, a "You won!" message with the final score, and the debug info confirms the win.
+6. Click **New Game 🔁** - a fresh secret is drawn, attempts/score/history all reset to zero, and the "You already won" screen is gone, so you can immediately play again.
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+pytest tests/
+============================= test session starts ==============================
+platform darwin -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
+collected 18 items
+
+tests/test_game_logic.py ..................                              [100%]
+
+============================== 18 passed in 0.04s ===============================
 ```
 
 ## 🚀 Stretch Features
