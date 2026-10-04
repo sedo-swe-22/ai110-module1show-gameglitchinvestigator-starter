@@ -17,9 +17,10 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Guess higher than the secret | "Go LOWER!" hint | "Go HIGHER!" hint (hints swapped) | None, no error |
+| Finish a game, then click "New Game" | A fresh game starts | Stuck on the old "You already won" / "Game over" screen | None, `st.stop()` ran silently |
+| Make several guesses in a row | Every guess compared as a number | On even attempts the secret was turned into a string, so comparisons were wrong | None, no exception shown |
+| Type a guess and press Enter | The guess is submitted | Nothing happened until I clicked Submit | None, no error |
 
 ---
 
@@ -35,19 +36,14 @@ I used Claude Code in agent mode as my pair-programming partner for the whole re
 
 ## 3. Debugging and testing your fixes
 
-I considered a bug fixed only after two things lined up: the specific symptom I'd reproduced was gone, and `pytest tests/` still passed (or, for a new fix, started passing) with no regressions elsewhere. For state-related bugs (FIXME 3 and FIXME 4) I also used Streamlit's `AppTest` to run the app headlessly and inspect `st.session_state` directly before and after clicking a button, since those bugs weren't visible in unit tests alone.
-
-One concrete test: after fixing FIXME 3 (New Game not resetting the game), I ran an `AppTest` script that clicked "Submit Guess" with the correct answer, confirmed `status == "won"`, then clicked "New Game" and asserted `status == "playing"`, `attempts == 0`, and `history == []`. Before the fix, `status` stayed `"won"` after New Game, which meant the app hit `st.stop()` on the very next rerun and looked frozen - the test made that failure obvious instead of me having to guess from the UI.
-
-For `logic_utils.py`, I ran `pytest tests/ -v` after every change. Once `check_guess`, `get_range_for_difficulty`, `parse_guess`, and `update_score` were all refactored in, the suite went from 3 tests (only covering `check_guess`) to 18 passing tests in `0.04s`.
-
-AI did help design the tests: I asked it to first review `logic_utils.py` and report which behaviors had no test coverage before writing anything. It identified several non-obvious rules I hadn't thought to test myself - the score floor of `10` on a late win, the deliberately different even/odd scoring for "Too High", `parse_guess` truncating (not rounding) decimal strings like `"50.9"` to `50`, and the silent fallback to `(1, 100)` for an unrecognized difficulty. I reviewed that list, asked for tests covering all of them, and confirmed all 18 passed together.
+I counted a bug as fixed only when the symptom I had reproduced was gone and `pytest tests/` still passed. For the state bugs (FIXME 3 and 4) I also used Streamlit's `AppTest` to run the app headlessly and check `st.session_state`. For example, after fixing FIXME 3 I submitted the winning guess, clicked "New Game", and asserted `status == "playing"`, `attempts == 0` and `history == []`. I asked the AI to list the untested behaviors in `logic_utils.py` before writing tests, which grew the suite from 3 to 18 passing tests. One caveat: the tests assert that a "Too High" guess scores +5 on even attempts and -5 on odd ones, which I first took as intended but now suspect is another leftover bug that the tests simply lock in.
 
 ---
 
 ## 4. What did you learn about Streamlit and state?
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+  Every time you click a button or type something, Streamlit runs the whole script again from the top, so any normal variable goes back to its starting value. `st.session_state` is a small memory that survives those reruns, so things like the secret number, attempts, score and history have to live there. Several of the original bugs came from state being reset, or only partly reset, between reruns.
 
 ---
 
@@ -55,5 +51,8 @@ AI did help design the tests: I asked it to first review `logic_utils.py` and re
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+  - I'll ask the AI to list which behaviors have no tests before it writes any, and I'll verify each fix with `pytest` or `AppTest` rather than trusting that it looks right. I also liked making one small commit per fix.
 - What is one thing you would do differently next time you work with AI on a coding task?
+  - I'd read the surrounding code myself before accepting a change, and question behavior the AI calls intentional, like the even/odd scoring rule I almost let through.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+  - AI-generated code can look finished while hiding bugs, so it needs the same tests and review as code I wrote myself.
