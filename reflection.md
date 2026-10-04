@@ -36,7 +36,7 @@ I used Claude Code in agent mode as my pair-programming partner for the whole re
 
 ## 3. Debugging and testing your fixes
 
-I counted a bug as fixed only when the symptom I had reproduced was gone and `pytest tests/` still passed. For the state bugs (FIXME 3 and 4) I also used Streamlit's `AppTest` to run the app headlessly and check `st.session_state`. For example, after fixing FIXME 3 I submitted the winning guess, clicked "New Game", and asserted `status == "playing"`, `attempts == 0` and `history == []`. I asked the AI to list the untested behaviors in `logic_utils.py` before writing tests, which grew the suite from 3 to 18 passing tests, and three more edge-case tests later brought it to 21. One caveat: the tests assert that a "Too High" guess scores +5 on even attempts and -5 on odd ones, which I first took as intended but now suspect is another leftover bug that the tests simply lock in.
+I counted a bug as fixed only when the symptom I had reproduced was gone and `pytest tests/` still passed. For the state bugs (FIXME 3 and 4) I also used Streamlit's `AppTest` to run the app headlessly and check `st.session_state`. For example, after fixing FIXME 3 I submitted the winning guess, clicked "New Game", and asserted `status == "playing"`, `attempts == 0` and `history == []`. I asked the AI to list the untested behaviors in `logic_utils.py` before writing tests, which grew the suite from 3 to 18 passing tests, and three more edge-case tests and the scoring fix later brought it to 20. I also caught a fifth bug late: "Too High" scored +5 on even attempts and -5 on odd ones, and my own tests had locked that in as "intended", so I fixed the rule and replaced those tests with one regression test.
 
 ---
 
@@ -53,6 +53,6 @@ I counted a bug as fixed only when the symptom I had reproduced was gone and `py
   - This could be a testing habit, a prompting strategy, or a way you used Git.
   - I'll ask the AI to list which behaviors have no tests before it writes any, and I'll verify each fix with `pytest` or `AppTest` rather than trusting that it looks right. I also liked making one small commit per fix.
 - What is one thing you would do differently next time you work with AI on a coding task?
-  - I'd read the surrounding code myself before accepting a change, and question behavior the AI calls intentional, like the even/odd scoring rule I almost let through.
+  - I'd read the surrounding code myself before accepting a change, and question behavior the AI calls intentional, like the even/odd scoring rule I first let through.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
   - AI-generated code can look finished while hiding bugs, so it needs the same tests and review as code I wrote myself.

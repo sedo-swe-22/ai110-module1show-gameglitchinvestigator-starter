@@ -77,10 +77,9 @@ def test_update_score_win_floors_at_ten():
     # from the raw formula, but the score is never reduced below +10.
     assert update_score(current_score=0, outcome="Win", attempt_number=20) == 10
 
-def test_update_score_too_high_even_attempt_adds_points():
-    assert update_score(current_score=0, outcome="Too High", attempt_number=2) == 5
-
-def test_update_score_too_high_odd_attempt_subtracts_points():
+def test_update_score_too_high_always_subtracts_points():
+    # Regression test for FIXME 5: even attempts used to add 5 instead.
+    assert update_score(current_score=0, outcome="Too High", attempt_number=2) == -5
     assert update_score(current_score=0, outcome="Too High", attempt_number=3) == -5
 
 def test_update_score_too_low_always_subtracts_points():

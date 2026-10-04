@@ -32,12 +32,14 @@ It wrote the code, ran away, and now the game is unplayable.
   - FIXME 2: the "Too High"/"Too Low" feedback messages were swapped, telling the player to go the wrong direction.
   - FIXME 3: clicking "New Game" reset `attempts` and `secret` but left `status` and `history` untouched, so the app immediately hit `st.stop()` on the stale "won"/"lost" status and looked stuck in the previous game.
   - FIXME 4: the guess input showed "Press Enter to apply" but pressing Enter did nothing, since a plain `st.text_input` outside a form only reruns the script on Enter - it doesn't set the Submit button's return value to `True`.
+  - FIXME 5: "Too High" guesses added 5 points on even attempts and subtracted 5 on odd ones, so a wrong guess could raise the score.
 - [x] **Fixes applied:**
   - FIXME 1: removed the branch that converted `secret` to a string, so guesses are always compared as integers.
   - FIXME 2: corrected the swapped branches in `check_guess` so a high guess returns "Too High" (shown as "Go LOWER!") and a low guess returns "Too Low" (shown as "Go HIGHER!").
   - FIXME 3: "New Game" now also resets `status`, `history` and `score`, so a fresh game starts cleanly.
   - FIXME 4: wrapped the input and Submit button in an `st.form`, so Enter now submits the guess like clicking the button.
-  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 21 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
+  - FIXME 5: `update_score` now subtracts 5 for every wrong guess ("Too High" or "Too Low"), with a regression test.
+  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 20 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
 
 ## 📸 Demo Walkthrough
 
@@ -58,11 +60,11 @@ Challenge 1 (advanced edge-case tests):
 pytest tests/
 ============================= test session starts ==============================
 platform darwin -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
-collected 21 items
+collected 20 items
 
-tests/test_game_logic.py .....................                           [100%]
+tests/test_game_logic.py ....................                            [100%]
 
-============================== 21 passed in 0.04s ==============================
+============================== 20 passed in 0.04s ==============================
 ```
 
 ## 🚀 Stretch Features
