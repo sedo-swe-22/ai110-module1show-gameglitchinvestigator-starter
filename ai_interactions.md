@@ -1,76 +1,20 @@
 # AI Interactions Log
 
-> **Stretch features only.** Only fill in the sections that apply to stretch features you attempted. If you did not attempt a stretch feature, leave its section blank or delete it. This file is not required for the core project.
-
----
-
-## Agent Workflow (SF8)
-
-> Document your experience using an AI agent (e.g., Cursor Agent, Claude, Copilot) to make multi-step changes autonomously.
-
-**What task did you give the agent?**
-
-<!-- Describe the goal you asked the agent to accomplish -->
-
-**What did the agent do?**
-
-<!-- List the steps the agent took (files edited, commands run, etc.) -->
-
-**What did you have to verify or fix manually?**
-
-<!-- Describe anything the agent got wrong or that required human review -->
-
----
-
-## Test Generation (SF7)
-
-> Document how you used AI to help generate or improve tests.
-
-| Edge Case | Prompt Used | AI-Suggested Test | Did It Pass? | Your Reasoning |
-|-----------|-------------|-------------------|--------------|----------------|
-| | | | | |
-| | | | | |
-| | | | | |
-
----
-
-## Linting & Style (SF9)
-
-> Document your use of AI for linting or code style improvements.
+## Test Generation (Challenge 1: Advanced Edge-Case Testing)
 
 **Prompt used:**
 
 ```
-<!-- Paste the prompt you gave the AI -->
+Review parse_guess in logic_utils.py and identify three edge-case inputs that
+could still break the game (for example negative numbers, extremely large
+values, odd whitespace). Add pytest cases to tests/test_game_logic.py that
+check them, based on how the function actually behaves.
 ```
 
-**Linting output before:**
+| Edge Case | Why I chose it | AI-Suggested Test | Did It Pass? |
+|-----------|----------------|-------------------|--------------|
+| `"-5"` | Players can type negatives, which are outside every difficulty range. | `test_parse_guess_negative_number_is_accepted_as_int` | Yes |
+| `"99999999999999999999"` | Checks that a huge value does not crash or overflow the parser. | `test_parse_guess_extremely_large_number` | Yes |
+| `"  42  "` | Players often paste or type stray spaces around a number. | `test_parse_guess_whitespace_padded_number_is_trimmed` | Yes |
 
-```
-<!-- Paste relevant linter warnings/errors -->
-```
-
-**Changes applied:**
-
-<!-- Describe what you changed based on the AI's suggestions -->
-
----
-
-## Model Comparison (SF11)
-
-> Compare two AI models on the same task.
-
-**Task given to both models:**
-
-<!-- Describe what you asked each model to do -->
-
-| | Model A | Model B |
-|-|---------|---------|
-| **Model name** | | |
-| **Response summary** | | |
-| **More Pythonic?** | | |
-| **Clearer explanation?** | | |
-
-**Which did you prefer and why?**
-
-<!-- Your conclusion -->
+**Note:** `parse_guess` only parses; it does not range-check, so negative and huge values count as valid guesses and the game logic treats them as ordinary "Too High"/"Too Low" results.

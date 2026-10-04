@@ -89,3 +89,24 @@ def test_update_score_too_low_always_subtracts_points():
 
 def test_update_score_unknown_outcome_is_unchanged():
     assert update_score(current_score=42, outcome="Something Else", attempt_number=1) == 42
+
+
+# Challenge 1: edge-case inputs for parse_guess
+def test_parse_guess_negative_number_is_accepted_as_int():
+    # parse_guess only parses; range checking is not its job.
+    ok, value, err = parse_guess("-5")
+    assert ok is True
+    assert value == -5
+    assert err is None
+
+def test_parse_guess_extremely_large_number():
+    ok, value, err = parse_guess("99999999999999999999")
+    assert ok is True
+    assert value == 99999999999999999999
+    assert err is None
+
+def test_parse_guess_whitespace_padded_number_is_trimmed():
+    ok, value, err = parse_guess("  42  ")
+    assert ok is True
+    assert value == 42
+    assert err is None

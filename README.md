@@ -37,7 +37,7 @@ It wrote the code, ran away, and now the game is unplayable.
   - FIXME 2: corrected the swapped branches in `check_guess` so a high guess returns "Too High" (shown as "Go LOWER!") and a low guess returns "Too Low" (shown as "Go HIGHER!").
   - FIXME 3: "New Game" now also resets `status`, `history` and `score`, so a fresh game starts cleanly.
   - FIXME 4: wrapped the input and Submit button in an `st.form`, so Enter now submits the guess like clicking the button.
-  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 18 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
+  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 21 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
 
 ## 📸 Demo Walkthrough
 
@@ -58,11 +58,11 @@ Challenge 1 (advanced edge-case tests):
 pytest tests/
 ============================= test session starts ==============================
 platform darwin -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
-collected 18 items
+collected 21 items
 
-tests/test_game_logic.py ..................                              [100%]
+tests/test_game_logic.py .....................                           [100%]
 
-============================== 18 passed in 0.04s ===============================
+============================== 21 passed in 0.04s ==============================
 ```
 
 ## 🚀 Stretch Features
