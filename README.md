@@ -39,7 +39,7 @@ It wrote the code, ran away, and now the game is unplayable.
   - FIXME 3: "New Game" now also resets `status`, `history` and `score`, so a fresh game starts cleanly.
   - FIXME 4: wrapped the input and Submit button in an `st.form`, so Enter now submits the guess like clicking the button.
   - FIXME 5: `update_score` now subtracts 5 for every wrong guess ("Too High" or "Too Low"), with a regression test.
-  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 20 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
+  - Refactored the game logic (`parse_guess`, `check_guess`, `update_score`, difficulty ranges) out of `app.py` into `logic_utils.py`, and added 26 pytest tests covering difficulty ranges, guess parsing and scoring edge cases.
 
 ## 📸 Demo Walkthrough
 
@@ -60,13 +60,13 @@ Challenge 1 (advanced edge-case tests):
 pytest tests/
 ============================= test session starts ==============================
 platform darwin -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
-collected 20 items
+collected 26 items
 
-tests/test_game_logic.py ....................                            [100%]
+tests/test_game_logic.py ..........................                      [100%]
 
-============================== 20 passed in 0.04s ==============================
+============================== 26 passed in 0.05s ==============================
 ```
 
 ## 🚀 Stretch Features
 
-Not attempted.
+- **Challenge 2: Feature Expansion (High Score tracker).** The best winning score per difficulty is saved to `highscores.json` (git-ignored) and shown in the sidebar as "🏆 Best score". Winning with a higher score than the saved best shows "🏆 New high score!". The file logic lives in `load_high_scores` and `save_high_score` in `logic_utils.py` and is covered by six tests; `app.py` only calls them. A missing or corrupt file is treated as "no scores yet". See the Agent Workflow section in `ai_interactions.md`.
