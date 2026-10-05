@@ -96,23 +96,26 @@ with st.form(key=f"guess_form_{difficulty}"):
     )
     submit = st.form_submit_button("Submit Guess 🚀")
 
-col1, col2 = st.columns(2)
-with col1:
-    new_game = st.button("New Game 🔁")
-with col2:
-    show_hint = st.checkbox("Show hint", value=True)
-
 # FIX: New Game only reset attempts/secret; AI (agent mode) pointed out that status
 # and history were never cleared, which made the stale "won"/"lost" status trigger
 # st.stop() below and made the app look stuck in the previous game.
-if new_game:
+# FIX: the guess box also kept its old text. A widget's value can't be changed after
+# it is drawn, so the reset runs as the button's on_click callback (before the
+# rerun) and clears the input's session_state key there; AI suggested the callback.
+def start_new_game():
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(low, high)
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
-    st.success("New game started.")
-    st.rerun()
+    st.session_state[f"guess_input_{difficulty}"] = ""
+
+
+col1, col2 = st.columns(2)
+with col1:
+    st.button("New Game 🔁", on_click=start_new_game)
+with col2:
+    show_hint = st.checkbox("Show hint", value=True)
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
