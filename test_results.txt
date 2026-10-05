@@ -2,20 +2,8 @@
 platform darwin -- Python 3.13.14, pytest-9.1.1, pluggy-1.6.0
 rootdir: /Users/soh/Documents/personal/learning/codepath/ai110-module1show-gameglitchinvestigator-starter
 plugins: anyio-4.15.1
-collected 0 items / 1 error
+collected 26 items
 
-==================================== ERRORS ====================================
-__________________ ERROR collecting tests/test_game_logic.py ___________________
-ImportError while importing test module '/Users/soh/Documents/personal/learning/codepath/ai110-module1show-gameglitchinvestigator-starter/tests/test_game_logic.py'.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-/opt/homebrew/Cellar/python@3.13/3.13.14/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py:88: in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-tests/test_game_logic.py:1: in <module>
-    from logic_utils import (
-E   ModuleNotFoundError: No module named 'logic_utils'
-=========================== short test summary info ============================
-ERROR tests/test_game_logic.py
-!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-=============================== 1 error in 0.08s ===============================
+tests/test_game_logic.py ..........................                      [100%]
+
+============================== 26 passed in 0.05s ==============================
