@@ -1,7 +1,9 @@
 from logic_utils import (
     check_guess,
     get_range_for_difficulty,
+    load_high_scores,
     parse_guess,
+    save_high_score,
     update_score,
 )
 
@@ -109,3 +111,37 @@ def test_parse_guess_whitespace_padded_number_is_trimmed():
     assert ok is True
     assert value == 42
     assert err is None
+
+
+# Challenge 2: high score tracker (uses pytest's tmp_path, never the real file)
+def test_load_high_scores_missing_file_returns_empty(tmp_path):
+    assert load_high_scores(tmp_path / "scores.json") == {}
+
+def test_load_high_scores_corrupt_file_returns_empty(tmp_path):
+    path = tmp_path / "scores.json"
+    path.write_text("not json {")
+    assert load_high_scores(path) == {}
+
+def test_save_high_score_first_score_is_a_record(tmp_path):
+    path = tmp_path / "scores.json"
+    assert save_high_score(path, "Normal", 50) is True
+    assert load_high_scores(path) == {"Normal": 50}
+
+def test_save_high_score_higher_score_replaces_old(tmp_path):
+    path = tmp_path / "scores.json"
+    save_high_score(path, "Normal", 50)
+    assert save_high_score(path, "Normal", 70) is True
+    assert load_high_scores(path) == {"Normal": 70}
+
+def test_save_high_score_lower_or_equal_score_is_ignored(tmp_path):
+    path = tmp_path / "scores.json"
+    save_high_score(path, "Normal", 50)
+    assert save_high_score(path, "Normal", 30) is False
+    assert save_high_score(path, "Normal", 50) is False
+    assert load_high_scores(path) == {"Normal": 50}
+
+def test_save_high_score_tracks_difficulties_separately(tmp_path):
+    path = tmp_path / "scores.json"
+    save_high_score(path, "Easy", 80)
+    save_high_score(path, "Hard", 20)
+    assert load_high_scores(path) == {"Easy": 80, "Hard": 20}

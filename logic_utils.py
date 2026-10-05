@@ -1,3 +1,6 @@
+import json
+
+
 def get_range_for_difficulty(difficulty: str):
     """Return (low, high) inclusive range for a given difficulty."""
     if difficulty == "Easy":
@@ -68,3 +71,28 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
         return current_score - 5
 
     return current_score
+
+
+# Challenge 2 (High Score tracker): AI agent mode wrote these file helpers so the
+# save/load logic stays out of app.py and can be tested with a temp file.
+def load_high_scores(path):
+    """Return {difficulty: best_score} from a JSON file, or {} if unusable."""
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    return data
+
+
+def save_high_score(path, difficulty: str, score: int) -> bool:
+    """Save score if it beats the stored best for difficulty; True if it did."""
+    scores = load_high_scores(path)
+    if difficulty in scores and score <= scores[difficulty]:
+        return False
+    scores[difficulty] = score
+    with open(path, "w") as f:
+        json.dump(scores, f)
+    return True
