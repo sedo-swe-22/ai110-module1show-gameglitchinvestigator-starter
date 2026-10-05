@@ -1,14 +1,20 @@
 import random
+from pathlib import Path
+
 import streamlit as st
 
 from logic_utils import (
     check_guess,
     get_range_for_difficulty,
+    load_high_scores,
     parse_guess,
+    save_high_score,
     update_score,
 )
 # FIX: Refactored all pure game logic out of app.py into logic_utils.py (AI agent
 # mode) so it can be unit tested without Streamlit; see tests/test_game_logic.py.
+
+HIGH_SCORE_FILE = Path(__file__).parent / "highscores.json"
 
 HINT_MESSAGES = {
     "Win": "🎉 Correct!",
@@ -40,6 +46,13 @@ low, high = get_range_for_difficulty(difficulty)
 
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
+
+# Challenge 2 (High Score tracker): AI agent mode added the file helpers in
+# logic_utils.py; I kept app.py to just calling them and showing the result.
+best_score = load_high_scores(HIGH_SCORE_FILE).get(difficulty)
+st.sidebar.caption(
+    f"🏆 Best score: {best_score}" if best_score is not None else "🏆 Best score: none yet"
+)
 
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
@@ -139,6 +152,8 @@ if submit:
         if outcome == "Win":
             st.balloons()
             st.session_state.status = "won"
+            if save_high_score(HIGH_SCORE_FILE, difficulty, st.session_state.score):
+                st.success("🏆 New high score!")
             st.success(
                 f"You won! The secret was {st.session_state.secret}. "
                 f"Final score: {st.session_state.score}"
